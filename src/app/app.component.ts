@@ -10,32 +10,24 @@ import { from, fromEvent, of } from 'rxjs';
 })
 export class AppComponent {
   constructor() {
-    const users = [
-      { id: '1', name: 'John', age: 30 },
-      { id: '2', name: 'Jack', age: 35 },
-      { id: '3', name: 'Mike', age: 25 },
-    ];
-
-    const messagePromise = new Promise((resolve) => {
+    const messagePromise = new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve('Promise resolved');
+        resolve('Server Error');
       }, 1000);
     });
 
-    const users$ = of(users);
     const message$ = from(messagePromise);
-    const bodyClick$ = fromEvent(document, 'click');
 
-    users$.subscribe((users) => {
-      console.log('users', users);
-    });
-
-    message$.subscribe((message) => {
-      console.log('message', message);
-    });
-
-    bodyClick$.subscribe((event) => {
-      console.log('event', event);
+    message$.subscribe({
+      next: (message) => {
+        console.log('message', message);
+      },
+      error: (err) => {
+        console.error('err', err);
+      },
+      complete: () => {
+        console.log('Finished!');
+      },
     });
   }
 }
